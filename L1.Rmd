@@ -1,5 +1,5 @@
 ---
-title: "L1"
+title: "L1 Overview"
 author: "Xiaoting Chen"
 date: "2023-08-07"
 output: pdf_document
@@ -7,24 +7,82 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(HistData)
+library(lubridate)
 ```
 
-## R Markdown
+## Basic calculations
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+# complex number
+1i
+round(exp(1i*pi)+1)
 ```
 
-## Including Plots
+### practice 1.
+```{r}
+fib <- c(0,1,1,2,3,5,8,13,21,34) # 3rd number = sum(the two numbers before)
 
-You can also embed plots, for example:
+# alternatively 
+fib = vector()
+fib[1:2] = c(0,1)
+for (i in 3:10) {
+  fib[i] <- sum(c(fib[i-1],fib[i-2]))
+}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+length(fib)
+sum(fib)
+prod(fib)
+diff(fib)
+
+a <- 1:100
+N <- 100
+sum(a) == N*(N+1)/2
+
+a_2 <- a^2
+sum(a_2)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## list
+
+```{r}
+list_x <- list(A = pi,
+               B = c(0,1),
+               c = 1:10,
+               D = c("one","two"))
+list_x[2]
+list_x[[2]]
+```
+
+## data frame
+
+```{r}
+data("Virginis.interp")
+# Virginis.interp |> dplyr::as_tibble() |> class()
+#virginis <- as_tibble(Virginis.interp)
+virginis = Virginis.interp |> as_tibble()
+mean(virginis$velocity)
+```
+
+
+## plots
+
+```{r}
+data("Snow.dates")
+clr <- ifelse(Snow.dates$date < mdy("09081854"), "red", "darkgreen")
+plot(deaths ~ date, data = Snow.dates,
+     type = "h", lwd = 2, col = clr, xlab="")
+points(deaths ~ date, data = Snow.dates,
+       cex = 0.5, pch = 16, col = clr)
+```
+
+
+## simulating coin flips
+
+```{r}
+coin <- c("H", "T")
+set.seed(0)
+sp <- sample(coin, 100, replace = T, prob = c(0.6, 0.4)) 
+mean(sp == "H")
+```
