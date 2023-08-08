@@ -1,0 +1,103 @@
+---
+title: "Homework 1"
+author: "The Big Picture & Introduction to R"
+format: pdf
+editor: visual
+---
+
+## Problem 1: Basic R Commands and Structures
+
+For this problem, please load the `Virginis.interp` data set into your R environment from the following data library: `HistData`
+
+-   To install packages, use the following code: `install.packages("NAME.OF.PACKAGE")`
+
+-   To load the package after installation, use the following code: `library(NAME.OF.PACKAGE)`
+
+A. Please load the data into R as a tibble (`as_tibble`) and describe the data structure. Please report how many rows/ columns of data are there (don't count them, use code to figure this out), what is the `class` of each column of the data?
+
+```{r message=FALSE}
+#load the tidyverse package by executing the code below
+install.packages("tidyverse")
+library(tidyverse)
+library(HistData)
+data("Virginis.interp")
+virginis = Virginis.interp 
+virginis |> dim() 
+virginis |> class()
+
+```
+
+B. Please take the average and median of the following columns: *posangel*, *distance*, and *velocity*. Report the range of years in the data as well.
+
+```{r}
+
+```
+
+## Problem 2: Revisiting the Gauss
+
+Revisit slide 20 in Lecture one and consider Gauss' algorithm:
+
+-   N(N+1)/2
+
+We did the following in R and said N = 100
+
+`d1 <- c(1:100)` #this code creates a sequence 1 through 100 and assigns it to the variable d1
+
+`sum(d1) = 100 * (100 +1)/2` #this just states that the sum of d1 is equal to the sum of Gauss' formula when using 100 as our number of choice.
+
+Write a function so that one can calculate the sum of any real number. Name your function `gauss`. After, run your function for the numbers 100, 250, and 500 and report your answers below.
+
+NOTE: Delete the \# in front of the below text to return to code. We use \# to comment lines of code or notes to ourselves when working in R. The below is for you to fill in to make the function run.
+
+```{r}
+
+gauss <- function(N) {
+  sum <- #fill in the appropriate formula
+  return(#fill in what you want return)
+}
+
+```
+
+## Problem 3: Dice Rolling Function
+
+A. In this next section we will simulate rolling fair (each side has equal probability) six-sided die. Suppose we wanted to roll one die 10 times. Since the output of any die roll is a number between 1 and 6, we could use the `sample` command . In the code box below, use the `sample` command, sampling from `1:6`, the integers between 1 and 6 inclusive, 10 times with replacement. In addition, consider what 'replacement' means and what would happen if you wrote `replace = FALSE` in your code.
+
+```{r}
+
+```
+
+B. Let's now roll a six-sided die, 20 times, where the probability for rolling each side is unfair. Set the probability for each side of the day as follows:
+
+-   Side 1: 3/8
+
+-   Side 2: 1/8
+
+-   Side 3: 1/8
+
+-   Side 4: 1/8
+
+-   Side 5; 1/8
+
+-   Side 6: 1/8
+
+hint: you'll need to use the following code in your sample command `prob = c()`
+
+```{r}
+
+```
+
+C. In this final section we will create a function to roll 2 fair (each side has equal probability) six-sided die. Write a function called `roll()` so that you you roll two dice, with replacement, and sums your two dice as the output.
+
+hint: *reference part A of this section. In your function, you'll need to replace the \# of times rolled with any variable 'n'* . We provide the code you should be working with below.
+
+```{r}
+roll <- function () {
+  die <- #insert code here
+  dice <- #insert code here
+  sum(dice)
+}
+
+
+
+roll() #test your function by executing the roll() command
+```

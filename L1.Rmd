@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(HistData)
 library(lubridate)
+library(ggplot2)
+library(gridExtra)
+library(scales)
 ```
 
 ## Basic calculations
@@ -44,7 +47,31 @@ a_2 <- a^2
 sum(a_2)
 ```
 
-## list
+add up the first 100 integers without using sum() function
+```{r}
+n <- 100
+x <- 1:n
+s <- 0
+for (i in 1:n) {
+  s <- s + x[i]
+}
+```
+
+add only even numbers in 1:100
+```{r}
+n <- 100
+x <- 1:n
+s <- 0
+for (i in 1:n) {
+  if (x[i]%%2 == 0) {
+    s <- s + x[i] 
+  }
+}
+```
+
+## R basics
+
+### list
 
 ```{r}
 list_x <- list(A = pi,
@@ -55,7 +82,7 @@ list_x[2]
 list_x[[2]]
 ```
 
-## data frame
+### data frame
 
 ```{r}
 data("Virginis.interp")
@@ -66,7 +93,7 @@ mean(virginis$velocity)
 ```
 
 
-## plots
+### plots
 
 ```{r}
 data("Snow.dates")
@@ -77,6 +104,23 @@ points(deaths ~ date, data = Snow.dates,
        cex = 0.5, pch = 16, col = clr)
 ```
 
+Intro to ggplot
+```{r}
+x <- seq(0, 100, by = 5)
+y <- x^2
+
+quadratic <- tibble(x = x, y = y)
+p1 <- ggplot(data = quadratic, 
+             mapping = aes(x = x, y = y))
+p2 <- p1 + geom_point(size = 0.5)
+p3 <- p1 + geom_line(linewidth = 0.2, 
+                     color = 'red')
+p4 <- p1 + geom_point(size = 0.5) + 
+  geom_line(linewidth = 0.2, color = 'red')
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+```
+
 
 ## simulating coin flips
 
@@ -85,4 +129,108 @@ coin <- c("H", "T")
 set.seed(0)
 sp <- sample(coin, 100, replace = T, prob = c(0.6, 0.4)) 
 mean(sp == "H")
+```
+
+check convergence of coin flips
+
+```{r}
+coin <- c(0,1)
+set.seed(1) # why do we do this?
+n <- 1e4
+est_prop <- numeric(n) # allocate a vector of size n
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
+
+coin_dat <- tibble(n = 1:n, est_prop = est_prop)
+ggplot(data = coin_dat, mapping = aes(x = n, y = est_prop)) +
+  geom_line(size=0.1)
+```
+
+Law of large numbers
+```{r}
+ggplot(data = coin_dat, mapping = aes(x = n, y = est_prop)) +
+  geom_line(size = 0.1) +
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips on Log10 scale") +
+  ylab("Estimated proportion of Heads") +
+  ggtitle("Error decreases with the size of the sample")
+```
+
+
+## Reproduce experiments / simulations
+```{r}
+estimate_proportion <- function(n) {
+  coin <- c(1, 0)
+  x <- sample(coin, n, replace = TRUE)
+  est <- mean(x)
+  return(est)
+}
+x <- replicate(1e3, estimate_proportion(10))
+hist(x, 
+     xlab = "Number of simulations", 
+     main = "Distribution of Proportions of Heads")
+```
+
+```{r}
+library(purrr)
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+y <- map_dbl(2:500, estimate_proportion). # the same as sapply(2:500, estimate_proportion)
+plot(2:500, y, xlab = "", ylab = "", type = 'l')
+```
+
+practice: \
+modify the coin bias to 0.3
+```{r}
+estimate_proportion_bias <- function(n, bias = 0.5) {
+  coin <- c(1, 0)
+  prob <- c(bias, 1-bias)
+  x <- sample(coin, n, prob = prob, replace = TRUE)
+  est <- mean(x)
+  return(est)
+}
+x <- replicate(1e3, estimate_proportion_bias(n=10, bias = 0.3))
+hist(x, 
+     xlab = "Number of simulations", 
+     main = "Distribution of Proportions of Heads")
+```
+
+
+
+## Estimating \(\pi\) by Simulation 
+$$ \pi = 4\frac{A_c}{A_s}$$
+(deviration in slides)
+```{r}
+set.seed(0)
+n <- 1e3
+x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+inside <- x^2 + y^2 < 1
+data <- tibble(x, y, inside)
+ggplot(aes(x = x, y = y), data = data)+ 
+  geom_point(aes(color = inside)) + 
+  theme(legend.position = "none") +
+  coord_fixed(ratio = 1)
+```
+
+```{r}
+cat("Estimated value of pi =", 4*sum(inside) / n)
+```
+
+practice:\
+function to estimate value of pi with specified number of iterations
+```{r}
+set.seed(0)
+est_pi <- function(n) {
+  n <- n
+  x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+  inside <- x^2 + y^2 < 1
+  return(4*sum(inside) / n)
+}
+
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+y <- map_dbl(2:1000, est_pi)
+plot(2:1000, y, xlab = "", ylab = "", type = 'l')
+abline(h = pi, col = "red", lty = 2)
 ```

@@ -1,0 +1,47 @@
+---
+title: "L2"
+author: "Xiaoting Chen"
+date: "2023-08-08"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(scales)
+```
+
+
+## Exponential function
+
+### compound interest
+```{r}
+
+```
+
+practice:\
+bacteria double in size every 4h. a culture starts with 1000, the population after 10h/24h?
+```{r}
+bac_growth <- function(initial_p, time) {
+  p_i <- initial_p
+  t <- time
+  p_n <- p_i * 2^(t/4)
+  p_n
+}
+
+bac_growth(1000, 10)
+bac_growth(1000, 24)
+```
+
+### the number e
+
+```{r}
+
+```
+
+
+```{r}
+
+```
