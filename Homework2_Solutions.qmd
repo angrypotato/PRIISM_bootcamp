@@ -1,0 +1,88 @@
+---
+title: "Homework 2: Solutions"
+format: pdf
+editor: visual
+---
+
+## Problem 1: Flipping Coins and Simulation
+
+1.  Do some investigation, what is the law of large numbers? Why is it important? Can you think of an example aside from flipping a coin where it could be important?
+
+-   *The Law of Large Numbers helps describes the relationship between the sample size and the accuracy of the sample mean or other sample statistics compared to the true population parameter. If you repeatedly take larger and larger random samples from a population and calculate their means, those means will become more and more representative of the actual average of the entire population. Another example of this law in practice is rolling dice. Imagine you have a fair six-sided die, and you want to estimate the average value of the rolls. Each time you roll the die and record the result, you calculate the average of the recorded values. As you roll the die more and more times, the average of the rolls will tend to get closer to the expected average value.*
+
+1.  Let's practice writing and simulating data. Attempt to write your own simulation for flipping a coin and storing your data in empty vector. After you simulate and store your data, please plot your simulation using GGplot. There's no need to plot on the logarithmic scale, however, please attempt to draw a red line at the mean using *geom_hline().* The code below should get you started to complete
+
+    ```{r}
+    set.seed(1)
+    coin <- c(1,0)
+    n <- 25
+    est_prop <- numeric(n)
+    for (i in 1:n) {
+      x <- sample(coin, i, replace = TRUE)
+      est_prop[i]<- mean(x)
+    }
+
+    simulation_data <- data.frame(simu_n = 1:n, estimated_proportion = est_prop)
+
+    ggplot(simulation_data, aes(x = simu_n, y = estimated_proportion)) +
+      geom_line() + 
+      geom_hline(yintercept = mean(coin), color = "red", linetype = "dashed") +
+      labs(title = "Coin Simulation: Law of Large Numbers",
+           x = "Sample Size",
+           y = "Estimated Proportion") 
+    ```
+
+2.  Observe the plot you generated and take note of the wild behavior of the simulated line. Provide your insights on why the plot might be difficult to interpret, taking into consideration Q1 of this section in your response. Revise the above code to enhance the convergence onto red line, allowing for clearer visualization.
+
+```{r}
+set.seed(1)
+coin <- c(1,0)
+n <- 1e4
+est_prop <- numeric(n)
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i]<- mean(x)
+}
+
+simulation_data <- data.frame(simu_n = 1:n, estimated_proportion = est_prop)
+
+ggplot(simulation_data, aes(x = simu_n, y = estimated_proportion)) +
+  geom_line() + 
+  geom_hline(yintercept = mean(coin),color = "red", linetype = "dashed") +
+  labs(title = "Coin Simulation: Law of Large Numbers",
+       x = "Sample Size",
+       y = "Estimated Proportion") 
+```
+
+## Problem 2: Plotting and Describing Data
+
+1.  Using the Cholera data from `library(HistData)` let's practice using ggplot and taking some descriptive statistics of our data set.
+
+```{r}
+data <- HistData::Cholera
+nrow(data)
+ncol(data)
+mean(data$cholera_deaths)
+unique(data$region)
+aggregate(popn ~ region, data = data, FUN = sum)
+
+
+ggplot(data, aes(x = cholera_deaths , y = popn , color = region )) + 
+  geom_point() + 
+  ggtitle("Cholera Deaths x Population") + 
+  xlab("Number of Cholera Deaths") + 
+  ylab("Population")
+```
+
+2.  Please use ggplot to plot to a bar chart that shows the number of deaths by region. Please use below code as a guide and comment on what you find.
+
+```{r}
+#the fill command below is an aesthetic you should use to instruct ggplot to color the bars by region, you only need to include variable you want to color by after the equal sign 
+
+ggplot(data, aes(x = region, y = cholera_deaths, fill = region)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  ggtitle("Deaths by Region") +
+  xlab("Region") +
+  ylab("Cholera Deaths")
+
+```

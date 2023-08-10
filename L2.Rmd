@@ -42,6 +42,56 @@ bac_growth(1000, 24)
 ```
 
 
-```{r}
 
+## Logarithmic function
+
+LSE
+```{r}
+LSE <- function(x) {
+  c <- max(x)
+  y <- c + log(sum(exp(x - c)))
+  y
+}
+
+X <- c(1e3, 1e3 + 1, 1e3 + 2)
+LSE(X)
+
+```
+
+softmax_log
+```{r}
+softmax_log <- function(x) {
+  x_new <- x - LSE(x)
+  x_new
+}
+softmax_log(X)
+sum(exp(softmax_log(X)))
+```
+
+
+## derivatives
+
+```{r}
+n <- 100
+t <- seq(0, pi, length = n)
+x <- sin(t) * cos(t)
+dxdt <- cos(t)^2 - sin(t)^2  # derived derivative
+
+d <- tibble(t, x, dxdt)
+p <- ggplot(d, aes(t, x))
+p + geom_line() + geom_line(aes(y = dxdt), col = 'red')
+```
+
+approximate the derivative
+```{r}
+s <- pi / (n - 1)        # choose the same step s as the increment in the t sequence
+all.equal(s, diff(t)[1]) # check that the above statement is true
+
+appr_dxdt <- diff(x)/s   # derivative ≈ rise / run
+d <- d %>%
+  mutate(appr_dxdt = c(NA, appr_dxdt))
+p <- ggplot(d, aes(t, x))
+p + geom_line() + geom_line(aes(y = dxdt), col = 'red') +
+  geom_line(aes(y = appr_dxdt), col = 'blue', size = 5, alpha = 1/5) 
+# the approximated derivative value (blue band) cover the true value (red line)
 ```
